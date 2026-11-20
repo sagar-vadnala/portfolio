@@ -96,7 +96,7 @@ export function RecruiterSnapshot({
 
             <div className="flex flex-wrap gap-2.5 border-t border-border px-6 py-5">
               <TrackedLink
-                href={resumeUrl ?? "/resume.pdf"}
+                href={resumeUrl ?? `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/resume.pdf`}
                 download
                 eventName={ANALYTICS_EVENTS.RESUME_DOWNLOAD}
                 className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground hover:brightness-110 transition-[filter]"

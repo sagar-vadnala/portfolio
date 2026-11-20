@@ -43,6 +43,20 @@ npx tsx prisma/seed.ts  # copies content/*.ts into the database (skips if alread
 npm run dev
 ```
 
+## Deploy to GitHub Pages (static mode)
+
+`.github/workflows/deploy-pages.yml` builds the static-mode site as a static export
+(`NEXT_PUBLIC_STATIC_EXPORT=true`) and publishes it on every push to `main`. The admin
+dashboard, API routes, and `proxy.ts` need a server, so the workflow drops them from its
+CI checkout only. They stay in the repo for a server deploy (e.g. Vercel) later.
+
+1. One-time: repo **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+   (Pages on a private repo needs a paid GitHub plan; on a free plan the repo must be public.)
+2. Push to `main`. The site goes live at `https://<user>.github.io/<repo>/`. The workflow sets
+   the base path and site URL automatically, including for a custom domain.
+
+To update the site, edit `content/*.ts` or `public/resume.pdf` and push.
+
 ## Before you deploy (database mode)
 
 1. **Set environment variables** (see `.env.example`):

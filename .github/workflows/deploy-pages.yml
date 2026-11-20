@@ -1,0 +1,64 @@
+# Builds the public site as a static export and publishes it to GitHub Pages.
+# One-time setup: repo Settings → Pages → Build and deployment → Source: "GitHub Actions".
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let an in-progress deployment finish; queue the next one instead of cancelling it.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      # Provides the site URL and the repo subpath (e.g. "/portfolio"; empty for a custom domain).
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      - run: npm ci
+
+      # GitHub Pages only serves static files. The admin dashboard, API routes, and proxy need
+      # a server, so they're dropped from this CI checkout only — they stay in the repo for a
+      # server deployment (e.g. Vercel) later.
+      - name: Remove server-only routes
+        run: rm -rf app/admin app/api proxy.ts
+
+      # --webpack: Turbopack (the default) doesn't apply basePath to the generated favicon
+      # link (app/icon.tsx), so it would 404 under /portfolio. Webpack does.
+      - name: Build static site
+        run: npm run build -- --webpack
+        env:
+          NEXT_PUBLIC_STATIC_EXPORT: "true"
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.base_url }}
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

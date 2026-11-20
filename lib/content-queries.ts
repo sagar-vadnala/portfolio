@@ -264,7 +264,8 @@ export async function getPublicEducation(includeDrafts = false) {
 }
 
 export async function getCurrentResume() {
-  if (!isDatabaseConfigured) return { url: "/resume.pdf" };
+  // Plain <a href> doesn't get basePath automatically, so prefix it for GitHub Pages subpaths.
+  if (!isDatabaseConfigured) return { url: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/resume.pdf` };
   try {
     const resume = await prisma.resume.findFirst({
       where: { isCurrent: true },

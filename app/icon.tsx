@@ -2,6 +2,8 @@ import { ImageResponse } from "next/og";
 
 export const size = { width: 64, height: 64 };
 export const contentType = "image/png";
+// Generated once at build time (required for the static export).
+export const dynamic = "force-static";
 
 // "SV" monogram in the site's accent colors, matching the navbar mark.
 export default function Icon() {

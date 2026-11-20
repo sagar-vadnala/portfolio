@@ -10,6 +10,8 @@ type EventMetadata = Record<string, string | number | boolean>;
 /** Fire-and-forget anonymous analytics event. Never throws, never blocks the UI. */
 export function track(name: AnalyticsEventName, metadata?: EventMetadata) {
   if (typeof window === "undefined") return;
+  // A static export (GitHub Pages) has no /api routes to receive events.
+  if (process.env.NEXT_PUBLIC_STATIC_EXPORT === "true") return;
 
   const payload = JSON.stringify({
     name,

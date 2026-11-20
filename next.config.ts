@@ -1,7 +1,17 @@
 import type { NextConfig } from "next";
 
+// Static export for GitHub Pages (see .github/workflows/deploy-pages.yml). Off by default,
+// so `npm run build` / Vercel keep the full server build (admin, API routes, proxy).
+// NEXT_PUBLIC_BASE_PATH is the repo subpath on <user>.github.io (e.g. "/portfolio");
+// it's empty for a custom domain or a <user>.github.io repo.
+const isStaticExport = process.env.NEXT_PUBLIC_STATIC_EXPORT === "true";
+
 const nextConfig: NextConfig = {
+  output: isStaticExport ? "export" : undefined,
+  basePath: (isStaticExport && process.env.NEXT_PUBLIC_BASE_PATH) || undefined,
   images: {
+    // The default image optimizer needs a server; a static export serves images as-is.
+    unoptimized: isStaticExport,
     remotePatterns: [
       {
         protocol: "https",
