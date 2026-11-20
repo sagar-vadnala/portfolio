@@ -1,6 +1,7 @@
-import { ArrowUp, Mail } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import { PlatformIcon } from "@/components/ui/SocialIcon";
 import { TrackedLink } from "@/components/ui/TrackedLink";
+import { EmailIconLink } from "@/components/ui/EmailIconLink";
 import { ANALYTICS_EVENTS } from "@/lib/analytics-events";
 
 export function Footer({
@@ -35,15 +36,10 @@ export function Footer({
             </TrackedLink>
           ))}
           {email && (
-            <TrackedLink
-              href={`mailto:${email}`}
-              eventName={ANALYTICS_EVENTS.EXTERNAL_LINK_CLICK}
-              metadata={{ label: "Email" }}
+            <EmailIconLink
+              email={email}
               className="inline-flex size-9 items-center justify-center rounded-lg border border-border hover:text-foreground hover:border-border-strong transition-colors"
-              aria-label="Email"
-            >
-              <Mail className="size-4" aria-hidden="true" />
-            </TrackedLink>
+            />
           )}
           <a
             href="#top"
